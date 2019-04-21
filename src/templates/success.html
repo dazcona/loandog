@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block page_content %}
+
+    <div class="jumbotron">
+
+        <img width="50px" height="50px" src="{{ url_for('static', filename='tick.png') }}"><h2>Congratulations!</h2>
+
+        <br>
+
+        <p> 
+            {{ name }}, your loan application has been <strong>accepted</strong> in principle. 
+            We will be in touch with you shorly to confirm next steps. We look forward to helping you succeed in your life journey! <br><br>
+            Duration:  <strong> {{ duration }} years </strong> <br>
+            Amount:  <strong> {{ money }} € </strong> <br>
+            Interest rate: <strong> {{ interest | int }}% </strong> <br>
+            Pay as you Play:  <strong> {{ play }}% </strong> <br>
+        </p>
+
+
+    </div>
+
+{% endblock %}
+

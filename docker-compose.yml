@@ -1,0 +1,17 @@
+web:
+  restart: always
+  build: ./
+  container_name: web
+  working_dir: /web
+  # expose:
+  #   - 80
+  ports:
+    - 5000:5000
+  environment:
+    - DISPLAY=unix$DISPLAY
+  volumes:
+      - "./:/web"
+      - /tmp/.X11-unix:/tmp/.X11-unix
+  command: python src/app.py
+  # env_file:
+  #   - ../config/.env

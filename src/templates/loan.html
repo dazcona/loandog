@@ -1,0 +1,437 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block page_content %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/d3.v3.min.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/nv.d3.css') }}">
+<script type="text/javascript" src="{{ url_for('static', filename='js/nv.d3.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/stream_layers.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/loading-bar.css') }}">
+<script type="text/javascript" src="{{ url_for('static', filename='js/loading-bar.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+
+<div class="container">
+  <div class="row">
+
+    <!-- first column -->
+    <div class="col-4 col-sm-4 col-md-4">
+
+      <div id="ratedivparent">
+        <br><br>
+        <label for="ratediv">Interest Rate</label>
+        <div id="ratediv" class="ldBar label-center" alt="Interest Rate" data-preset="bubble" data-pattern-size="30"
+        data-fill="{{ url_for('static', filename='bubble.svg') }}" style="width:300px;height:300px;"
+        data-value="12" data-fill-background="#9df" data-min="2" data-max="15" ></div>
+      </div>
+
+    </div>
+    
+    <!-- second column -->
+    <div class="col-4 col-sm-4 col-md-4">
+
+      <div id="namediv" class="form-group">
+        <br><br><br><br><br><br><br>
+        <label for="forename">Name</label>
+        <input id='forename' type='text' class="form-control" placeholder="Alan Greenspan" name='forename'
+        value="Alan Greenspan" autofocus></input>
+      </div>
+      
+      <div id="emaildiv" class="form-group">
+        <label for="email">Email</label>
+        <input id="email" type='text' class="form-control" placeholder="alan@greenspan.com" name='email'
+        value='alan@greenspan.com' autofocus></input>
+      </div>
+
+      <div id="valueyears" class="valueyears" style="display:none;">5 years</div>
+      <input id="years" type="range" min="1" max="6" step="1" value="5" style="display:none;">
+
+      <div id="valueeuro" class="valueeuro" style="display:none;">2000 €</div>
+      <input id="money" type="range" min="500" step="100" max="10000" value="2000" style="display:none;">
+
+      <div id="playvalue" class="valueplay" style="display:none;font-size:2.5em">Pay as you Play: 0%</div>
+      <input id="play" type="range" min="0" step="1" max="10" value="0" style="display:none;">
+
+      <div id="transactionsdiv" style="display:none;">
+        <br><br><br><br><br><br><br><br><br>
+        <div class="form-group">
+          <label for="transactions">Bank's transactions</label>
+          <div class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="transactions"
+            data-toggle="dropdown">Ulster Bank
+            <span class="caret"></span></button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+              <li><a href="#" data-value="action">Ulster Bank</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div id="twitterdiv" style="display:none;">
+        <br><br><br><br><br><br><br><br>
+        <div class="form-group">
+          <label for="twitter">Twitter</label>
+          <input id="twitter" type='text' class="form-control" placeholder="@alangreenspn" name='twitter'
+          value="@alangreenspn" autofocus></input>
+          <br>
+          <img width="50%" height="50%" src="{{ url_for('static', filename='twitter.png') }}">
+        </div>
+      </div>
+
+      <div id="twitterimages" style="display:none;">
+        <img width="100%" height="100%" src="{{ url_for('static', filename='globo.png') }}">
+        <img width="100%" height="100%" src="{{ url_for('static', filename='wordcloud.png') }}">
+      </div>
+
+      <div id="linkedindiv" style="display:none;">
+          <br><br><br><br><br><br><br>
+        <div class="form-group">
+          <label for="linkedin">LinkedIn</label>
+          <input id="linkedin" type='text' class="form-control"
+            placeholder="https://www.linkedin.com/in/alan-greenspan-b11469172/" name='linkedin'
+            value="https://www.linkedin.com/in/alan-greenspan-b11469172/" autofocus></input>
+          <br>
+          <img width="50%" height="50%" src="{{ url_for('static', filename='linkedin.png') }}">
+        </div>
+      </div>
+
+      <div id="pdfdiv" style="display:none;">
+          <br><br><br><br><br><br>
+        <div class="form-group">
+          <label for="capture">Transcripts</label>
+          <input id="capture" type="file" name="capture" accept=".pdf">
+        </div>
+      </div>
+
+      <div id="paydiv" style="display:none;">
+        <label class="switch">
+          <input type="checkbox" checked>
+          <span class="slider round"></span>
+        </label>
+        <p>Enable Pay as you Play</p>
+      </div>
+
+      <div id="pie_chart" style="display:none;" lass='with-3d-shadow with-transitions'>
+        <br><br><br><br>
+        <svg id="test1" class="mypiechart"></svg>
+      </div>
+      
+      <div id="textdiv" style="display:none;">
+        <br><br><br><br><br><br>
+        <div id="text" style="font-size:15px;font-weight: bold;color: gray;"></div>
+      </div>
+    
+    </div>
+
+    <!-- third column -->
+    <div class="col-4 col-sm-4 col-md-4">
+      <br><br><br><br><br><br><br><br><br><br><br>
+      <button id="button" onclick="toggle_display()" class="btn btn-lg btn-primary btn-block" 
+      style="background-color: #133264;">Next</button>
+      <button id="button" class="btn btn-lg btn-default btn-block">Skip</button>
+    </div>
+  
+  </div>
+</div>
+
+<div id="loader"></div>
+
+<div id="myNav" class="overlay">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+</div>
+
+<script>
+
+  // MONEY and YEARS
+  var years = document.getElementById("years");
+  var money = document.getElementById("money");
+  var play = document.getElementById("play");
+  var printyears = document.getElementById("valueyears");
+  var printmoney = document.getElementById("valueeuro");
+  var printplay = document.getElementById("playvalue");
+  var previous_year = 3;
+  var previous_euro = 2000;
+  var previous_play = 0;
+
+  var rangeValue = function () {
+    printyears.innerHTML = years.value + ' years';
+    // update value
+    coolbar_number = coolbar_number * (1 + (years.value - previous_year) / 10);
+    previous_year = years.value
+    bar2.set(coolbar_number);
+  }
+
+  var rangeValueEuro = function () {
+    printmoney.innerHTML = money.value + ' €';
+    // update value
+    coolbar_number = coolbar_number * (1 + (money.value - previous_euro) / 40000);
+    previous_euro = money.value
+    bar2.set(coolbar_number);
+  }
+
+  var rangePlay = function () {
+    printplay.innerHTML = 'Pay as you Play: ' + play.value + '%';
+    // update value
+    coolbar_number = coolbar_number * (1 - (play.value - previous_play) / 10);
+    previous_play = play.value;
+    bar2.set(coolbar_number);
+  }
+
+  years.addEventListener("input", rangeValue);
+  money.addEventListener("input", rangeValueEuro);
+  play.addEventListener("input", rangePlay);
+
+  // PIECHART
+  var testdata = [
+      {key: "Academia", y: 40, color: "#5F5"},
+      {key: "Industry", y: 3},
+      {key: "Charity", y: 6},
+      {key: "Patents", y: 2},
+      {key: "Courses", y: 25},
+      {key: "Connections", y: 20},
+      {key: "Activity", y: 7}
+  ];
+  var testdata2 = testdata;
+  var height = 350;
+  var width = 350;
+  nv.addGraph(function() {
+      var chart = nv.models.pieChart()
+          .x(function(d) { return d.key })
+          .y(function(d) { return d.y })
+          .width(width)
+          .height(height)
+          .showTooltipPercent(true);
+      d3.select("#test1")
+          .datum(testdata2)
+          .transition().duration(1200)
+          .attr('width', width)
+          .attr('height', height)
+          .call(chart);
+      // update chart data values randomly
+      setInterval(function() {
+          testdata2[0].y = Math.floor(Math.random() * 10);
+          testdata2[1].y = Math.floor(Math.random() * 10);
+          chart.update();
+      }, 4000);
+      return chart;
+  });
+  nv.addGraph(function() {
+      var chart = nv.models.pieChart()
+          .x(function(d) { return d.key })
+          .y(function(d) { return d.y })
+          //.labelThreshold(.08)
+          //.showLabels(false)
+          .color(d3.scale.category20().range().slice(8))
+          .growOnHover(false)
+          .labelType('value')
+          .width(width)
+          .height(height);
+      // make it a half circle
+      chart.pie
+          .startAngle(function(d) { return d.startAngle/2 -Math.PI/2 })
+          .endAngle(function(d) { return d.endAngle/2 -Math.PI/2 });
+      var is_disabled = false;
+      setInterval(function() {
+          chart.dispatch.changeState({disabled: {2: !is_disabled, 4: !is_disabled}});
+          is_disabled = !is_disabled;
+      }, 3000);
+      return chart;
+  });
+
+  // Iteration
+  var iteration = 0;
+
+  document.getElementById("loader").style.display = "none";
+
+  // Interest Rate
+  var coolbar_number = 12;
+  var bar = new ldBar("#ratediv");
+  var bar2 = document.getElementById("ratediv").ldBar;
+  bar.set(coolbar_number);
+
+  // Toggle function
+  function toggle_display() {
+
+    // Wait 2 second to hide the image
+    document.getElementById("loader").style.display = "block";
+    openNav()
+    setTimeout(hide, 1500);
+    setTimeout(next_box, 1500);
+  }
+
+  function hide() {
+    document.getElementById("loader").style.display = "none";
+    document.getElementById("myNav").style.width = "0%";
+  }
+
+  function next_box() {
+
+    var c = document.getElementById("namediv");
+    var d = document.getElementById("emaildiv");
+    var a = document.getElementById("transactionsdiv");
+    var x = document.getElementById("twitterdiv");
+    var xx = document.getElementById("twitterimages");
+    var y = document.getElementById("linkedindiv");
+    var b = document.getElementById("pdfdiv");
+    var p = document.getElementById("pie_chart");
+    var button = document.getElementById("button");
+    var ratediv = document.getElementById("ratedivparent");
+    var t = document.getElementById("textdiv");
+
+    if (iteration == 0) {
+
+      var name = document.getElementById("forename").value;
+      var email = document.getElementById("email").value;
+
+      var para = document.createElement("p");
+      var text = name + ", " + email;
+      var node = document.createTextNode(text);
+      para.appendChild(node);
+      document.getElementById("text").appendChild(para);
+
+      c.style.display = "none";
+      d.style.display = "none";
+
+      years.style.display = "block";
+      money.style.display = "block";
+      printyears.style.display = "block";
+      printmoney.style.display = "block";
+
+    } else if (iteration == 1) {
+
+      var para = document.createElement("p");
+      var text = 'Loan for €' + money.value + ' during ' + years.value + ' years';
+      var node = document.createTextNode(text);
+      para.appendChild(node);
+      document.getElementById("text").appendChild(para);
+
+      years.style.display = "none";
+      money.style.display = "none";
+      printyears.style.display = "none";
+      printmoney.style.display = "none";
+
+      a.style.display = "block";
+
+    } else if (iteration == 2) {
+
+      var para = document.createElement("p");
+      var text = "Banking transactions added from Ulster Bank";
+      var node = document.createTextNode(text);
+      para.appendChild(node);
+      document.getElementById("text").appendChild(para);
+
+      a.style.display = "none";
+
+      ratediv.style.display = "block";
+      x.style.display = "block";
+
+    } else if (iteration == 3) {
+
+      // TWITTER
+
+      var username = document.getElementById("twitter").value;
+      console.log(username);
+
+      $.getJSON('/twitter?user=' + username, function (data) {
+
+        var score = data['score']
+        var num_words = data['num_words'];
+        var confidence = data['confidence'];
+        coolbar_number -= score;
+        bar2.set(coolbar_number);
+
+        var para = document.createElement("p");
+        var text = "Twitter interests extracted from " + username + ", " + num_words + " words & " + confidence.toFixed(2) + " confidence";
+        var node = document.createTextNode(text);
+        para.appendChild(node);
+        document.getElementById("text").appendChild(para);
+
+      });
+
+        x.style.display = "none";
+
+        xx.style.display = "block";
+
+    } else if (iteration == 4) {
+
+      xx.style.display = "none";
+
+      y.style.display = "block";
+
+    } else if (iteration == 5) {
+
+      // LINKEDIN
+
+      var uri = document.getElementById("linkedin").value;
+      console.log(uri);
+
+      $.getJSON('/linkedin?uri=' + uri, function (data) {
+
+        var score = data['score']
+        coolbar_number -= score;
+        bar2.set(coolbar_number);
+
+        var para = document.createElement("p");
+        var text = "Linkedin skills extracted from Alan Greenspan";
+        var node = document.createTextNode(text);
+        para.appendChild(node);
+        document.getElementById("text").appendChild(para);
+
+        y.style.display = "none";
+
+        // Show graph
+        p.style.display = "block";
+      });
+
+    } else if (iteration == 6) {
+
+      // TRANSCRIPTS
+
+      p.style.display = "none";
+      
+      b.style.display = "block";
+
+    } else if (iteration == 7) {
+
+        b.style.display = "none";
+
+        var para = document.createElement("p");
+        var text = "Grades extracted from Transcripts2018.pdf";
+        var node = document.createTextNode(text);
+        para.appendChild(node);
+        document.getElementById("text").appendChild(para);
+
+        play.style.display = "block";
+        printplay.style.display = "block";
+
+      } else if (iteration == 8) {
+
+        play.style.display = "none";
+        printplay.style.display = "none";
+
+        var para = document.createElement("p");
+        var text = 'Pay-as-you-play with ' + play.value + '%';
+        var node = document.createTextNode(text);
+        para.appendChild(node);
+        document.getElementById("text").appendChild(para);
+
+        t.style.display = "block";
+
+        button.innerText = "Apply!"
+
+    } else { // Apply for loan
+
+      var name = document.getElementById("forename").value;
+      var args = 'play=' + play.value + '&money=' + money.value + '&duration=' + years.value + '&interest=' + coolbar_number + '&name=' + name;
+      window.location.href = "/success?" + args;
+    }
+
+    iteration += 1
+  }
+
+  function openNav() {
+    document.getElementById("myNav").style.width = "100%";
+  }
+
+</script>
+
+{% endblock %}

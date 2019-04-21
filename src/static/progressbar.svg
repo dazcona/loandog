@@ -1,0 +1,30 @@
+<svg>
+  <defs>
+    <linearGradient id="progressGradient" gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop stop-color="#376EA6" offset="0"/>
+      <stop stop-color="#8233A4" offset="0.5"/>
+      <stop stop-color="#B34646" offset="1"/>
+    </linearGradient>
+
+    <filter id="insetShadow" filterunits="userSpaceOnUse" x1="0%" y1="0%" x2="100%" y2="0%">
+        <feFlood flood-color="#000" flood-opacity="1"></feFlood>
+        <feComposite in2="SourceGraphic" operator="xor"></feComposite>
+        <feGaussianBlur stdDeviation="2"></feGaussianBlur>
+        <feOffset dx="0" dy="0" result="offsetblur"></feOffset>
+        <feFlood flood-color="#000" flood-opacity="1"></feFlood>
+        <feComposite in2="offsetblur" operator="atop"></feComposite>
+        <feComposite in2="SourceGraphic" operator="in"></feComposite>
+        <feMerge>
+            <feMergeNode in="SourceGraphic"></feMergeNode>
+            <feMergeNode></feMergeNode>
+        </feMerge>
+    </filter>
+  </defs>
+
+  <path id="container"
+    d="M10,0 L190,0 A1,1 0 1 1 190,20 L10,20 A1,1 0 1 1 10,0 z"
+    fill="#fff" filter="url(#insetShadow)" stroke-width="0" stroke="#CCC" />
+  <path id="bar"
+    d="M10,5 L50,5 A1,1 0 1 1 50,15 L10,15 A1,1 0 1 1 10,5 z"
+    fill="url(#progressGradient)"/>
+</svg>

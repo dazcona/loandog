@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block page_content %}
+
+    <div class="jumbotron">
+
+        <img class="card-img-top img-responsive" style="align-items:center;"
+        src="{{ url_for('static', filename='logo.jpg') }}">
+
+        <h3 class="lead"><strong>The "Pay as you Play" Student Loan</strong></h4>
+
+        <hr class="my-4">
+
+        <h4 class="lead">
+            Choose what you would like to tell us about yourself. 
+            The more we know you, the better your rate might be.
+        </h4>
+
+        <h4 class="lead">
+            <a class="btn btn-primary btn-lg" href="loan" role="button">Get your estimate!</a>
+        </h4>
+
+    </div>
+
+{% endblock %}
